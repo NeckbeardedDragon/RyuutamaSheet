@@ -1,0 +1,622 @@
+<html>
+    <head>
+        <style>
+            div.outer {
+                border: 3px solid black;
+                border-radius: 5px;
+                overflow: hidden;
+            }
+            table.outer {
+                border-collapse: collapse;
+                width: 100%;
+            }
+            table.inner {
+                border-collapse: collapse;
+                width: 100%;
+            }
+            table.outer td, table.outer th {
+                border: 1px solid black;
+                padding: 10px;
+            }
+            table.outer th {
+                background-color: lightgray;
+            }
+            input.form, textarea.form {
+                width: 100%;
+                border: none;
+            }
+            select.form {
+                border: none;
+            }
+            .st {
+                font-weight: bold;
+            }
+            * {
+                font-size: 18pt;
+                vertical-align: top;
+            }
+            .sm {
+                font-size: 12pt;
+            }
+            .w50 {
+                width: 50% !important;
+            }
+            .w25 {
+                width: 25% !important;
+            }
+            .w20 {
+                width: 20% !important;
+            }
+            .w30 {
+                width: 30% !important;
+            }
+            .w12 {
+                width: 12% !important;
+            }
+            .unpad {
+                padding: 0px !important;
+            }
+            .unpad table {
+                border: none !important;
+            }
+            .invert {
+                background-color: black;
+                color: white;
+            }
+            #Condition {
+                background: none;
+            }
+        </style>
+        <script>
+            function saveAsJSON(filename,data){
+                var a = document.createElement('a');
+                a.setAttribute("href","data:application/json,"+encodeURIComponent(JSON.stringify(data)));
+                a.setAttribute("download",filename);
+                a.style.display = "none";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+
+            function load(filenode,handler){
+                var f = filenode.files[0];
+                if(!f){
+                    return;
+                }
+                var reader = new FileReader();
+                reader.onload = handler;
+                reader.readAsText(f);
+            }
+
+            function loadFields(dict){
+                for(var e in dict){
+                    var el = document.getElementById(e);
+                    if("value" in el){
+                        el.value = dict[e];
+                    }
+                }
+            }
+
+            function loadFieldsEvent(e){
+                var dict = JSON.parse(e.target.result);
+                for(var e in dict){
+                    var el = document.getElementById(e);
+                    if("value" in el){
+                        el.value = dict[e];
+                    }
+                }
+            }
+
+            function saveFields(cls){
+                var fields = document.getElementsByClassName(cls);
+                var ret = {};
+                for(var i = 0; i < fields.length; i++){
+                    var f = fields[i];
+                    if("value" in f){
+                        ret[f.getAttribute("id")] = f.value;
+                    }
+                }
+                console.log(ret);
+                return ret;
+            }
+
+            function condition_format(){
+                var node = document.getElementById("Condition");
+                var val = parseInt(node.value);
+                if(!isNaN(val)){
+                    if(val<=2){
+                        node.parentElement.style.background = "lightcoral";
+                        return;
+                    }
+                    if(val>=10){
+                        node.parentElement.style.background = "lightgreen";
+                        return;
+                    }
+                }
+                node.parentElement.style.background = "white";
+                return;
+            }
+            function savebox(){
+                var name = document.getElementById("Name").value;
+                if(name.length == 0){
+                    name = "Unnamed";
+                }
+                saveAsJSON(name+".json",saveFields("form"));
+            }
+            function onload(){
+                document.getElementById("Condition").addEventListener("change", condition_format);
+                document.getElementById("LoadBox").addEventListener("change", function(){load(document.getElementById("LoadBox"),loadFieldsEvent);});
+                document.getElementById("Save").addEventListener("click", savebox);
+            }
+            document.addEventListener("DOMContentLoaded", onload);
+        </script>
+    </head>
+    <body>
+        <table class="spacing">
+            <tr>
+                <td class="w50">
+                    <table class="spacing">
+                        <tr>
+                            <td>
+                                <div class="st">Load File</div><input type="file" id="LoadBox" />
+                            </td>
+                            <td>
+                                <button id="Save">Save File</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="outer">
+                                <table class="outer">
+                                    <tr>
+                                        <th>Ryuujin</th>
+                                        <td><input type="text" id="Ryuujin" class="form" /></td>
+                                    </tr>
+                                </table>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="outer">
+                                <table class="outer">
+                                    <tr>
+                                        <th>Created</th>
+                                        <td><input type="text" id="Created" class="form" /></td>
+                                    </tr>
+                                </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan=2>
+                                <div class="outer">
+                                <table class="outer">
+                                    <tr>
+                                        <th>Character</th>
+                                        <td colspan=3><input type="text" id="Name" class="form" /></td>
+                                        <th>Player</th>
+                                        <td colspan=3><input type="text" id="Player" class="form" /></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Level</th>
+                                        <td><input type="text" id="Level" class="form" /></td>
+                                        <th>EXP</th>
+                                        <td><input type="text" id="EXP" class="form" /></td>
+                                        <th>Gender</th>
+                                        <td><input type="text" id="Gender" class="form" /></td>
+                                        <th>Age</th>
+                                        <td><input type="text" id="Age" class="form" /></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Class</th>
+                                        <td colspan=3><input type="text" id="Class" class="form" /></td>
+                                        <th>Type</th>
+                                        <td colspan=3><input type="text" id="Type" class="form" /></td>
+                                    </tr>
+                                </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan=2>
+                                <div class="outer">
+                                <table class="outer">
+                                    <tr>
+                                        <th>Class Skill</th>
+                                        <th>Stats Used</th>
+                                        <th class="w50">Effect</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="text" id="cs1" class="form" /></td>
+                                        <td><input type="text" id="su1" class="form" /></td>
+                                        <td class="w50"><input type="text" id="ef1" class="form" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="text" id="cs2" class="form" /></td>
+                                        <td><input type="text" id="su2" class="form" /></td>
+                                        <td class="w50"><input type="text" id="ef2" class="form" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="text" id="cs3" class="form" /></td>
+                                        <td><input type="text" id="su3" class="form" /></td>
+                                        <td class="w50"><input type="text" id="ef3" class="form" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="text" id="cs4" class="form" /></td>
+                                        <td><input type="text" id="su4" class="form" /></td>
+                                        <td class="w50"><input type="text" id="ef4" class="form" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="text" id="cs5" class="form" /></td>
+                                        <td><input type="text" id="su5" class="form" /></td>
+                                        <td class="w50"><input type="text" id="ef5" class="form" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="text" id="cs6" class="form" /></td>
+                                        <td><input type="text" id="su6" class="form" /></td>
+                                        <td class="w50"><input type="text" id="ef6" class="form" /></td>
+                                    </tr>
+                                </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan=2>
+                                <div class="outer">
+                                <table class="outer">
+                                    <tr>
+                                        <th>Weapon</th>
+                                        <td><input type="text" id="Weapon" class="form" /></td>
+                                        <th>Terrain</th>
+                                        <td><input type="text" id="Terrain" class="form" /></td>
+                                        <th class="w25">Personal Item</td>
+                                        <td class="w25"><input type="text" id="Item" class="form" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan=6>
+                                            <div class="st">Image Color / Appearance</div>
+                                            <textarea id="Appearance" class="form"></textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan=6>
+                                            <div class="st">Hometown / Reason for Travel</div>
+                                            <textarea id="Travel" class="form"></textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan=6>
+                                            <div class="st">Notes</div>
+                                            <textarea id="Notes" class="form"></textarea>
+                                        </td>
+                                    </tr>
+                                </table>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="w50">
+                    <table class="spacing">
+                        <tr>
+                            <td>
+                                <div class="outer">
+                                <table class="outer">
+                                    <tr>
+                                        <th>Stats</th>
+                                        <td class="unpad" colspan=3>
+                                            <table class="inner">
+                                                <tr>
+                                                    <td>
+                                                        <div class="st">STR</div>
+                                                        <div>d
+                                                            <select id="STR" class="form">
+                                                                <option value=4>4</option>
+                                                                <option value=6>6</option>
+                                                                <option value=8>8</option>
+                                                                <option value=10>10</option>
+                                                                <option value=12>12</option>
+                                                            </select>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="st">DEX</div>
+                                                        <div>d
+                                                            <select id="DEX" class="form">
+                                                                <option value=4>4</option>
+                                                                <option value=6>6</option>
+                                                                <option value=8>8</option>
+                                                                <option value=10>10</option>
+                                                                <option value=12>12</option>
+                                                            </select>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="st">INT</div>
+                                                        <div>d
+                                                            <select id="INT" class="form">
+                                                                <option value=4>4</option>
+                                                                <option value=6>6</option>
+                                                                <option value=8>8</option>
+                                                                <option value=10>10</option>
+                                                                <option value=12>12</option>
+                                                            </select>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="st">SPI</div>
+                                                        <div>d
+                                                            <select id="SPI" class="form">
+                                                                <option value=4>4</option>
+                                                                <option value=6>6</option>
+                                                                <option value=8>8</option>
+                                                                <option value=10>10</option>
+                                                                <option value=12>12</option>
+                                                            </select>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>HP</th>
+                                        <td class="unpad">
+                                            <table class="inner">
+                                                <tr><td class="sm invert">[Max HP = STR x2]</td></tr>
+                                                <tr><td><input type="text" id="maxhp" class="form w25" />&rArr;<input type="text" id="chp" class="form w50" /></td></tr>
+                                            </table>
+                                        </td>
+                                        <th>MP</th>
+                                        <td class="unpad">
+                                            <table class="inner">
+                                                <tr><td class="sm invert">[Max MP = SPI x2]</td></tr>
+                                                <tr><td><input type="text" id="maxmp" class="form w25" />&rArr;<input type="text" id="cmp" class="form w50" /></td></tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Condition</th>
+                                        <td class="unpad" colspan=2>
+                                            <table class="inner">
+                                                <tr><td class="sm invert">[STR+SPI] If over 10, add 1 dice size to any 1 stat</td></tr>
+                                                <tr><td><input type="text" id="Condition" class="form" /></td></tr>
+                                            </table>
+                                        </td>
+                                        <td class="unpad">
+                                            <table class="inner">
+                                                <tr><th class="sm">Fumble Points</th></tr>
+                                                <tr><td><input type="text" id="FP" class="form" /></td></tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan=3 class="unpad">
+                                            <table class="unpad">
+                                                <tr><td colspan=3>Traveling Rules</td></tr>
+                                                <tr><td class="sm">1) Movement Check [STR+DEX]</td><td class="sm">2) Direciton Dheck [INT+INT]</td><td class="sm">3) Camp Check [DEX+INT]</td></tr>
+                                            </table>
+                                        </td>
+                                        <td class="unpad">
+                                            <table class="inner">
+                                                <tr><th class="sm">Initiative [DEX+INT]</th><td><input type="text" id="Initiative" class="form" /></td></tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><div class="st">Equipment</div><div class="sm">(Equipped items count as size 0)</div></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="outer">
+                                <table class="outer">
+                                    <tr>
+                                        <th>Weapons</th>
+                                        <td class="unpad">
+                                            <table class="inner">
+                                                <tr>
+                                                    <td class="w25"><div class="sm">Name</div><input type="text" id="w1Name" class="form" /></td>
+                                                    <td><div class="sm">Accuracy</div><input type="text" id="w1Acc" class="form" /></td>
+                                                    <td><div class="sm">Damage</div><input type="text" id="w1Dmg" class="form" /></td>
+                                                    <td class="w12"><div class="sm">Durability</div><input type="text" id="w1Dur" class="form" /></td>
+                                                    <td class="w30"><div class="sm">Effect/etc.</div><input type="text" id="w1Eff" class="form" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="w25"><div class="sm">Name</div><input type="text" id="w2Name" class="form" /></td>
+                                                    <td><div class="sm">Accuracy</div><input type="text" id="w2Acc" class="form" /></td>
+                                                    <td><div class="sm">Damage</div><input type="text" id="w2Dmg" class="form" /></td>
+                                                    <td class="w12"><div class="sm">Durability</div><input type="text" id="w2Dur" class="form" /></td>
+                                                    <td class="w30"><div class="sm">Effect/etc.</div><input type="text" id="w2Eff" class="form" /></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Shield/ Armor</th>
+                                        <td class="unpad">
+                                            <table class="inner">
+                                                <tr>
+                                                    <td class="w25"><div class="sm">Name</div><input type="text" id="a1Name" class="form" /></td>
+                                                    <td><div class="sm">Defensive Points</div><input type="text" id="a1DP" class="form" /></td>
+                                                    <td><div class="sm">Penalty</div><input type="text" id="a1Pen" class="form" /></td>
+                                                    <td class="w12"><div class="sm">Durability</div><input type="text" id="a1Dur" class="form" /></td>
+                                                    <td class="w30"><div class="sm">Effect/etc.</div><input type="text" id="a1Eff" class="form" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="w25"><div class="sm">Name</div><input type="text" id="a2Name" class="form" /></td>
+                                                    <td><div class="sm">Defensive Points</div><input type="text" id="a2DP" class="form" /></td>
+                                                    <td><div class="sm">Penalty</div><input type="text" id="a2Pen" class="form" /></td>
+                                                    <td class="w12"><div class="sm">Durability</div><input type="text" id="a2Dur" class="form" /></td>
+                                                    <td class="w30"><div class="sm">Effect/etc.</div><input type="text" id="a2Eff" class="form" /></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Traveler's Outfit</th>
+                                        <td class="unpad">
+                                            <table class="inner">
+                                                <tr>
+                                                    <td class="w25"><div class="sm">Name</div><input type="text" id="o1Name" class="form" /></td>
+                                                    <td class="w25"><div class="sm">Effect</div><input type="text" id="o1Eff" class="form" /></td>
+                                                    <td class="w25"><div class="sm">Name</div><input type="text" id="o2Name" class="form" /></td>
+                                                    <td class="w25"><div class="sm">Effect</div><input type="text" id="o2Eff" class="form" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="w25"><div class="sm">Name</div><input type="text" id="o3Name" class="form" /></td>
+                                                    <td class="w25"><div class="sm">Effect</div><input type="text" id="o3Eff" class="form" /></td>
+                                                    <td class="w25"><div class="sm">Name</div><input type="text" id="o4Name" class="form" /></td>
+                                                    <td class="w25"><div class="sm">Effect</div><input type="text" id="o4Eff" class="form" /></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><div class="st">[Terrain + Weather] Determine bonuses and penalties for Terrain and Weather here</div></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="outer">
+                                <table class="outer">
+                                    <tr>
+                                        <td class="unpad">
+                                            <table class="inner">
+                                                <tr>
+                                                    <th>Check Bonus</th>
+                                                </tr>
+                                                <tr>
+                                                    <td><input type="text" id="CheckBonus" class="form" /></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td class="unpad">
+                                            <table class="inner">
+                                                <tr>
+                                                    <td class="sm" colspan=2>Level 1 &rArr; 6</td>
+                                                    <td class="sm" colspan=3>Level 2 &rArr; 8</td>
+                                                    <td class="sm" colspan=3>Level 3 &rArr; 10</td>
+                                                    <td class="sm" colspan=2>Level 4 &rArr; 12</td>
+                                                    <td class="sm" colspan=1>Level 5 &rArr; 14</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="sm">grassland</td>
+                                                    <td class="sm">wasteland</td>
+                                                    <td class="sm">woods</td>
+                                                    <td class="sm">highlands</td>
+                                                    <td class="sm">rocky terrain</td>
+                                                    <td class="sm">deep forest</td>
+                                                    <td class="sm">swamp</td>
+                                                    <td class="sm">mountain</td>
+                                                    <td class="sm">desert</td>
+                                                    <td class="sm">jungle</td>
+                                                    <td class="sm">alpine</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input type="text" id="grassland" class="form" /></td>
+                                                    <td><input type="text" id="wasteland" class="form" /></td>
+                                                    <td><input type="text" id="woods" class="form" /></td>
+                                                    <td><input type="text" id="highlands" class="form" /></td>
+                                                    <td><input type="text" id="rocky terrain" class="form" /></td>
+                                                    <td><input type="text" id="deep forest" class="form" /></td>
+                                                    <td><input type="text" id="swamp" class="form" /></td>
+                                                    <td><input type="text" id="mountain" class="form" /></td>
+                                                    <td><input type="text" id="desert" class="form" /></td>
+                                                    <td><input type="text" id="jungle" class="form" /></td>
+                                                    <td><input type="text" id="alpine" class="form" /></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="unpad">
+                                            <table class="inner">
+                                                <tr>
+                                                    <th>Check Penalty</th>
+                                                </tr>
+                                                <tr>
+                                                    <td><input type="text" id="CheckPenalty" class="form" /></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td class="unpad">
+                                            <table class="inner">
+                                                <tr>
+                                                    <td class="sm" colspan=5>Weather: +1</td>
+                                                    <td class="sm" colspan=4>Weather: +3</td>
+                                                    <td class="sm" colspan=2>Weather: +5</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="sm">rain</td>
+                                                    <td class="sm">strong wind</td>
+                                                    <td class="sm">fog</td>
+                                                    <td class="sm">hot</td>
+                                                    <td class="sm">cold</td>
+                                                    <td class="sm">hard rain</td>
+                                                    <td class="sm">snow</td>
+                                                    <td class="sm">deep fog</td>
+                                                    <td class="sm">dark</td>
+                                                    <td class="sm">hurricane</td>
+                                                    <td class="sm">blizzard</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input type="text" id="rain" class="form" /></td>
+                                                    <td><input type="text" id="strong wind" class="form" /></td>
+                                                    <td><input type="text" id="fog" class="form" /></td>
+                                                    <td><input type="text" id="hot" class="form" /></td>
+                                                    <td><input type="text" id="cold" class="form" /></td>
+                                                    <td><input type="text" id="hard rain" class="form" /></td>
+                                                    <td><input type="text" id="snow" class="form" /></td>
+                                                    <td><input type="text" id="deep fog" class="form" /></td>
+                                                    <td><input type="text" id="dark" class="form" /></td>
+                                                    <td><input type="text" id="hurricane" class="form" /></td>
+                                                    <td><input type="text" id="blizzard" class="form" /></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><div class="st">Status Effects</div><div>If the next day's Condition Check is higher than the status effect number, it is cured.</div></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="outer">
+                                <table class="outer">
+                                    <tr>
+                                        <th>Body</th>
+                                        <td class="w20"><div class="st">Injury</div><div class="sm">[DEX]-1 Die size</div></td>
+                                        <td><input type="text" id="Injury" class="form" /></td>
+                                        <td class="w20"><div class="st">Poison</div><div class="sm">[STR]-1 Die size</div></td>
+                                        <td><input type="text" id="Poison" class="form" /></td>
+                                        <td class="w20"><div class="st">Sick</div><div class="sm">[ALL]-1 Die size</div></td>
+                                        <td><input type="text" id="Sick" class="form" /></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Mind</th>
+                                        <td class="w20"><div class="st">Tired</div><div class="sm">[SPI]-1 Die size</div></td>
+                                        <td><input type="text" id="Tired" class="form" /></td>
+                                        <td class="w20"><div class="st">Muddled</div><div class="sm">[INT]-1 Die size</div></td>
+                                        <td><input type="text" id="Muddled" class="form" /></td>
+                                        <td class="w20"><div class="st">Shock</div><div class="sm">[ALL]-1 Die size</div></td>
+                                        <td><input type="text" id="Shock" class="form" /></td>
+                                    </tr>
+                                </table>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
